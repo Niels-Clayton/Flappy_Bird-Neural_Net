@@ -9,18 +9,17 @@ WIN_HEIGHT = 800
 BASE_IMAGE = pygame.transform.scale2x(pygame.image.load(os.path.join("images", "base.png")))
 PIPE_IMAGE = pygame.transform.scale2x(pygame.image.load(os.path.join("images", "pipe.png")))
 BACKGROUND_IMAGE = pygame.transform.scale2x(pygame.image.load(os.path.join("images", "background.png")))
-BIRD_IMAGES = [pygame.transform.scale2x(pygame.image.load(os.path.join("images", "bird1.png"))),
-               pygame.transform.scale2x(pygame.image.load(os.path.join("images", "bird2.png"))),
-               pygame.transform.scale2x(pygame.image.load(os.path.join("images", "bird3.png")))]
 
 
 class Bird:
-    IMAGES = BIRD_IMAGES
     MAX_ROTATION = 30
     MIN_ROTATION = -85
     ROTATION_VELOCITY = 20
     TERMINAL_VELOCITY = 17
-    ANIMATION_TIME = 7
+    ANIMATION_TIME = 5
+    IMAGES = [pygame.transform.scale2x(pygame.image.load(os.path.join("images", "bird1.png"))),
+              pygame.transform.scale2x(pygame.image.load(os.path.join("images", "bird2.png"))),
+              pygame.transform.scale2x(pygame.image.load(os.path.join("images", "bird3.png")))]
 
     def __init__(self, x, y):
         self.x = x
@@ -131,24 +130,49 @@ class Pipe:
             return False
 
 
+class Base:
+    VELOCITY = 5
 
-def draw_window(win, bird, pipes):
+    def __init__(self):
+        self.base_image = BASE_IMAGE
+        self.width = self.base_image.get_width()
+        self.x1 = 0
+        self.x2 = self.width
+        self.y = WIN_HEIGHT - self.base_image.get_height() + 100
+
+    def move(self):
+        self.x1 -= self.VELOCITY
+        self.x2 -= self.VELOCITY
+
+        if self.x1 < -self.width:
+            self.x1 = self.x2 + self.width
+        if self.x2 < -self.width:
+            self.x2 = self.x1 + self.width
+
+    def draw(self, window):
+        window.blit(self.base_image, (self.x1, self.y))
+        window.blit(self.base_image, (self.x2, self.y))
+
+def draw_window(win, bird, pipes, base):
     win.blit(BACKGROUND_IMAGE, (0,0))
-    bird.draw(win)
     for pipe in pipes:
         pipe.draw(win)
+    base.draw(win)
+    bird.draw(win)
     pygame.display.update()
 
 
 def main():
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    bird = Bird(230, 350)
+    bird = Bird(200, 350)
     pipes = [Pipe(500)]
+    base = Base()
     clock = pygame.time.Clock()
 
     game = True
     playing = False
     while game:
+        base.move()
         clock.tick(30)
         to_remove = []
 
@@ -190,7 +214,7 @@ def main():
                 pipes.remove(rem)
 
             bird.move()
-        draw_window(win, bird, pipes)
+        draw_window(win, bird, pipes, base)
 
     pygame.quit()
     quit()
