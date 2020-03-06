@@ -14,7 +14,7 @@ BACKGROUND_IMAGE = pygame.transform.scale2x(pygame.image.load(os.path.join("imag
 class Bird:
     MAX_ROTATION = 30
     MIN_ROTATION = -85
-    ROTATION_VELOCITY = 20
+    ROTATION_VELOCITY = 10
     TERMINAL_VELOCITY = 17
     ANIMATION_TIME = 5
     IMAGES = [pygame.transform.scale2x(pygame.image.load(os.path.join("images", "bird1.png"))),
@@ -200,7 +200,7 @@ def main():
 
             for pipe in pipes:
                 if pipe.collide(bird):
-                    pass
+                    print("tim is a fag")
                 if pipe.x + pipe.bottom_pipe.get_width() < 0:
                     to_remove.append(pipe)
                 if not pipe.passed and pipe.x + (pipe.bottom_pipe.get_width() / 2) < bird.x:
